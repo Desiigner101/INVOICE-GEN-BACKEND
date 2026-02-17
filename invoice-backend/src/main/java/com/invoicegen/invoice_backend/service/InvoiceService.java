@@ -26,4 +26,8 @@ public class InvoiceService {
                 .orElseThrow(() -> new RuntimeException("Invoice not found:" + invoiceId));
         repository.delete(existingInvoice);
     }
+
+    public List<Invoice> fetchInvoices(){
+        return repository.findAll();
+    }
 }
