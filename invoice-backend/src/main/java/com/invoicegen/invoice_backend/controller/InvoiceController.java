@@ -25,4 +25,10 @@ public class InvoiceController {
     public ResponseEntity<List<Invoice>> fetchInvoices(){
         return ResponseEntity.ok(invoiceService.fetchInvoices());
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeInvoice(@PathVariable String id){
+        invoiceService.removeInvoice(id);
+        return ResponseEntity.noContent().build();
+    }
 }

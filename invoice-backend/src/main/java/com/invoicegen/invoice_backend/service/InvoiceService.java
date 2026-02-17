@@ -30,4 +30,10 @@ public class InvoiceService {
     public List<Invoice> fetchInvoices(){
         return repository.findAll();
     }
+
+    public void removeInvoice(String invoiceId){
+        Invoice existingInvoice = repository.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Invoice not found:" + invoiceId));
+        repository.delete(existingInvoice);
+    }
 }
