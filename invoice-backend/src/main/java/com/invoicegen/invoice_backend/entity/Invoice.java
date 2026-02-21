@@ -15,6 +15,7 @@ public class Invoice {
     @Id
     private String id;
 
+    private String clerkId;
     private Company company;
     private Billing billing;
     private Shipping shipping;
@@ -23,7 +24,6 @@ public class Invoice {
     private String notes;
     private String logo;
     private double tax;
-    private String clerkId;
     @CreatedDate
     private Instant createdAt;
 
