@@ -24,6 +24,16 @@ public class User {
     private String firstName;
     private String lastName;
     private String photoUrl;
+
     @CreatedDate
     private Instant createdAt;
+
+    // for stripe
+    @Builder.Default
+    private String subscriptionType = "FREE";
+
+    private String stripeCustomerId;
+    private String stripeSubscriptionId;
+    private Instant subscriptionStartDate;
+    private Instant subscriptionEndDate;
 }
