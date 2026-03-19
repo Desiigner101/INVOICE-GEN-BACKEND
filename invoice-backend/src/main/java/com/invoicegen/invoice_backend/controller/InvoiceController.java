@@ -34,7 +34,7 @@ public class InvoiceController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeInvoice(@PathVariable String id, Authentication authentication){
         if(authentication.getName() != null){
-            invoiceService.removeInvoice(id, authentication.getName());
+            invoiceService.removeInvoice(authentication.getName(), id);
             return ResponseEntity.noContent().build();
         }
         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User does not have permission to access this resource");
