@@ -5,15 +5,16 @@ import com.invoicegen.invoice_backend.repository.UserRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
+import com.stripe.model.PaymentMethod;
 import com.stripe.model.Subscription;
 import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.CustomerUpdateParams;
+import com.stripe.param.PaymentMethodAttachParams;
 import com.stripe.param.SubscriptionCreateParams;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -37,10 +38,30 @@ public class StripeService {
         String customerId = user.getStripeCustomerId();
 
         if (customerId == null) {
+            // New customer - create with payment method
             Customer customer = createCustomer(user, paymentMethodId);
             customerId = customer.getId();
             user.setStripeCustomerId(customerId);
             userRepository.save(user);
+        } else {
+            // Existing customer - attach new payment method and set as default
+            PaymentMethod paymentMethod = PaymentMethod.retrieve(paymentMethodId);
+
+            // Attach to customer
+            PaymentMethodAttachParams attachParams = PaymentMethodAttachParams.builder()
+                    .setCustomer(customerId)
+                    .build();
+            paymentMethod.attach(attachParams);
+
+            // Update customer to use this as default payment method
+            CustomerUpdateParams updateParams = CustomerUpdateParams.builder()
+                    .setInvoiceSettings(
+                            CustomerUpdateParams.InvoiceSettings.builder()
+                                    .setDefaultPaymentMethod(paymentMethodId)
+                                    .build()
+                    )
+                    .build();
+            Customer.retrieve(customerId).update(updateParams);
         }
 
         // Create subscription
