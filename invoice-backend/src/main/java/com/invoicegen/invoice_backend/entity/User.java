@@ -24,6 +24,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String photoUrl;
+    private String password; // for mobile auth
 
     @CreatedDate
     private Instant createdAt;
