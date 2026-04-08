@@ -27,4 +27,13 @@ public class InvoiceService {
         repository.delete(existingInvoice);
     }
 
+    public Invoice updateInvoice(String clerkId, String invoiceId, Invoice invoice) {
+        Invoice existing = repository.findByClerkIdAndId(clerkId, invoiceId)
+                .orElseThrow(() -> new RuntimeException("Invoice not found: " + invoiceId));
+        invoice.setId(existing.getId());
+        invoice.setClerkId(clerkId);
+        invoice.setCreatedAt(existing.getCreatedAt());
+        return repository.save(invoice);
+    }
+
 }

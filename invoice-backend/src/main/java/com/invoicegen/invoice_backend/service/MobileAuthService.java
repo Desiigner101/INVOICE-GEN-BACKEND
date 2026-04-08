@@ -4,6 +4,7 @@ import com.invoicegen.invoice_backend.config.JwtUtil;
 import com.invoicegen.invoice_backend.dto.LoginRequest;
 import com.invoicegen.invoice_backend.dto.MobileAuthResponse;
 import com.invoicegen.invoice_backend.dto.RegisterRequest;
+import com.invoicegen.invoice_backend.dto.UpdateProfileRequest;
 import com.invoicegen.invoice_backend.entity.User;
 import com.invoicegen.invoice_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -106,5 +107,38 @@ public class MobileAuthService {
                 user.getLastName(),
                 "Login successful"
         );
+    }
+
+    public MobileAuthResponse updateProfile(String clerkId, UpdateProfileRequest request) {
+        User user = userRepository.findByClerkId(clerkId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getPhotoUrl() != null && !request.getPhotoUrl().isEmpty()) {
+            user.setPhotoUrl(request.getPhotoUrl());
+        }
+
+        userRepository.save(user);
+
+        return new MobileAuthResponse(
+                null,
+                user.getClerkId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                "Profile updated successfully"
+        );
+    }
+
+    public void deleteAccount(String clerkId) {
+        User user = userRepository.findByClerkId(clerkId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
     }
 }

@@ -51,4 +51,10 @@ public class InvoiceController {
                     .body("Failed to send invoice.");
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Invoice> updateInvoice(@PathVariable String id, @RequestBody Invoice invoice, Authentication authentication) {
+        Invoice updated = invoiceService.updateInvoice(authentication.getName(), id, invoice);
+        return ResponseEntity.ok(updated);
+    }
 }
